@@ -191,6 +191,13 @@ def deliver_packages(current_truck: List[Package], start_run: datetime.datetime,
     Returns:
         Tuple[float, bool, datetime.datetime]: Total distance traveled, whether truck is at hub, and current time.
     """
+    # Safety check: if start_run >= finish_time, return immediately
+    if start_run >= finish_time:
+        return 0.0, True, start_run
+    
+    # Safety check: if no packages, return immediately
+    if not current_truck:
+        return 0.0, True, start_run
     # Change the status of all trucks to en route
     for next_package in current_truck:
         next_package.status = "En route"
@@ -330,9 +337,14 @@ def main():
             truck_1 = Package.load_truck(truck_1, normal_packages, MAX_PACKAGES_PER_TRUCK)
             truck_2 = Package.load_truck(truck_2, normal_packages, MAX_PACKAGES_PER_TRUCK)
 
-            # Send both trucks out to deliver packages
-            truck_1_distance, truck_1_at_hub, truck_1_time = deliver_packages(truck_1, start_of_day, current_time)
-            truck_2_distance, truck_2_at_hub, truck_2_time = deliver_packages(truck_2, start_of_day, current_time)
+            # Send both trucks out to deliver packages (only if current_time is after start_of_day)
+            if current_time > start_of_day:
+                truck_1_distance, truck_1_at_hub, truck_1_time = deliver_packages(truck_1, start_of_day, current_time)
+                truck_2_distance, truck_2_at_hub, truck_2_time = deliver_packages(truck_2, start_of_day, current_time)
+            else:
+                # At start of day, trucks haven't moved yet
+                truck_1_distance, truck_1_at_hub, truck_1_time = 0.0, True, start_of_day
+                truck_2_distance, truck_2_at_hub, truck_2_time = 0.0, True, start_of_day
 
             # If the current time given is different then the start of day, we check if the delayed or package with
             # the wording address are at the Hub
@@ -560,4 +572,5 @@ def main():
     print(f"Total distance traveled: {total_distance:.1f} miles")
 
 if __name__ == "__main__":
+    main()
     main()
