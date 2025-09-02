@@ -61,18 +61,23 @@ def get_input() -> list[str]:
     Returns:
         list[str]: List of command arguments.
     """
-    line: list[str] = input("===> ").split()
-    while not line:
-        print()
-        print("Please enter a command.")
-        print("- Type \"quit\" to leave")
-        print()
-        line = input("===> ").split()
+    try:
+        line: list[str] = input("===> ").split()
+        while not line:
+            print()
+            print("Please enter a command.")
+            print("- Type \"quit\" to leave")
+            print()
+            line = input("===> ").split()
 
-    for position in range(len(line)):
-        line[position] = line[position].lower()
+        for position in range(len(line)):
+            line[position] = line[position].lower()
 
-    return line
+        return line
+    except (EOFError, KeyboardInterrupt):
+        # Handle EOF or Ctrl+C gracefully
+        print("\nExiting...")
+        return ["quit"]
 
 
 def validate_time(time_to_validate: str) -> bool:
@@ -269,7 +274,6 @@ def main():
     # Create the initial hash table, graph, address to id dict, and id to address dict
     global current_time
     hash_table = Package.read_packages("WGUPS Package File.csv")
-
 
     # Initialize distances to 0
     truck_1_distance = 0.0
