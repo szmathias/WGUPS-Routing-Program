@@ -206,6 +206,9 @@ def deliver_packages(current_truck: List[Package], start_run: datetime.datetime,
     while current_truck and not done_deliveries:
         truck_location, next_distance, package_to_deliver = find_next_location(current_truck, truck_location)
 
+        if not package_to_deliver:
+            break
+
         # Makes sure the truck isn't at the hub
         if truck_location != 0:
             delivery_time = truck_time + datetime.timedelta(minutes=(next_distance / (TRUCK_SPEED / 60)))
