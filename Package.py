@@ -304,11 +304,8 @@ def load_truck(truck: List[Package], packages: List[Package], max_packages_per_t
     Returns:
         list[Package]: Loaded truck.
     """
-    index = 0
-    temp_list = list(packages)
     while len(truck) < max_packages_per_truck and len(packages) > 0:
-        truck.append(temp_list[index])
-        packages.remove(temp_list[index])
-        index += 1
+        package_to_load = packages.pop(0)  # Remove and get first package
+        truck.append(package_to_load)
 
     return truck
