@@ -1,3 +1,9 @@
+"""
+main.py
+WGUPS Routing Program main entry point.
+Handles user interaction, package loading, truck routing, and delivery simulation.
+"""
+
 # Author: Zack Mathias | 010868562
 # Course: C950 - Data Structures and Algorithms II
 # Project: WGUPS Routing Program
@@ -7,6 +13,7 @@
 
 # Standard Library
 import datetime
+from typing import List, Tuple
 
 # Created Imports
 import Graph
@@ -27,6 +34,9 @@ current_time = start_of_day
 
 # prints the help menu containing all the possible commands
 def print_menu() -> None:
+    """
+    Prints the help menu containing all possible commands for the WGUPS Routing Program.
+    """
     # Program logo printed at the beginning
     print("+---------------------------------------------------+")
     print("|                       WGUPS                       |")
@@ -45,9 +55,12 @@ def print_menu() -> None:
     print()
 
 
-# Reads a line from user input and splits it into a list by whitespace. Then, transforms all commands to lowercase
-# to make parsing easier. If no input was given, we print a help and ask for more input until it's valid
 def get_input() -> list[str]:
+    """
+    Reads a line from user input, splits it into a list by whitespace, and transforms commands to lowercase.
+    Returns:
+        list[str]: List of command arguments.
+    """
     line: list[str] = input("===> ").split()
     while not line:
         print()
@@ -62,9 +75,14 @@ def get_input() -> list[str]:
     return line
 
 
-# Takes a time string in the format <hh:mm> and makes sure it's valid to
-# convert into a datetime object
 def validate_time(time_to_validate: str) -> bool:
+    """
+    Validates a time string in the format <hh:mm>.
+    Args:
+        time_to_validate (str): Time string to validate.
+    Returns:
+        bool: True if valid, False otherwise.
+    """
     is_valid_time = True
 
     # Loops through each character making sure it's a digit or colon
@@ -92,9 +110,15 @@ def validate_time(time_to_validate: str) -> bool:
     return is_valid_time
 
 
-# Given a valid time, converts the time to change to a new datetime object. Prints error messages
-# if the time or number of arguments are wrong
 def change_time(time_input: list[str], time_to_change: datetime.datetime) -> datetime.datetime:
+    """
+    Changes the current time to a new datetime object if valid.
+    Args:
+        time_input (list[str]): Command arguments for time.
+        time_to_change (datetime.datetime): Current time.
+    Returns:
+        datetime.datetime: New time if valid, else original time.
+    """
     num_arguments = len(time_input)
     new_time: datetime = time_to_change
 
@@ -123,8 +147,15 @@ def change_time(time_input: list[str], time_to_change: datetime.datetime) -> dat
 
 
 # The main algorithm we use to find our next package location.
-def find_next_location(current_truck: list[Package.Package], current_location: int) -> tuple[
-    int, float, Package.Package]:
+def find_next_location(current_truck: List[Package], current_location: int) -> Tuple[int, float, Package]:
+    """
+    Finds the next closest package location for delivery.
+    Args:
+        current_truck (List[Package]): List of packages on the truck.
+        current_location (int): Current location ID.
+    Returns:
+        Tuple[int, float, Package]: Next location ID, distance, and package to deliver.
+    """
     # next_location holds the index of our next location from our graph.
     # closest_distance with hold the mileage of the closest location, it's set to infinity to ensure any distance is closer.
     # package_to_deliver is the package of the closest location which we return to deliver.
@@ -149,8 +180,17 @@ def find_next_location(current_truck: list[Package.Package], current_location: i
 
 # Delivers packages from the current truck starting from a start time and ending deliveries when
 # the finish time specified is reached.
-def deliver_packages(current_truck: list[Package.Package], start_run: datetime.datetime,
-                     finish_time: datetime.datetime) -> tuple[float, bool, datetime.datetime]:
+def deliver_packages(current_truck: List[Package], start_run: datetime.datetime,
+                     finish_time: datetime.datetime) -> Tuple[float, bool, datetime.datetime]:
+    """
+    Delivers packages from the current truck, simulating delivery until finish_time is reached.
+    Args:
+        current_truck (List[Package]): List of packages on the truck.
+        start_run (datetime.datetime): Start time of delivery run.
+        finish_time (datetime.datetime): Time to stop delivery simulation.
+    Returns:
+        Tuple[float, bool, datetime.datetime]: Total distance traveled, whether truck is at hub, and current time.
+    """
     # Change the status of all trucks to en route
     for next_package in current_truck:
         next_package.status = "En route"
@@ -216,6 +256,9 @@ def deliver_packages(current_truck: list[Package.Package], start_run: datetime.d
     return distance, at_hub, time
 
 def main():
+    """
+    Main entry point for the WGUPS Routing Program. Handles user interaction and simulation loop.
+    """
     # Create the initial hash table, graph, address to id dict, and id to address dict
     global current_time
     hash_table = Package.read_packages("WGUPS Package File.csv")
@@ -421,8 +464,6 @@ def main():
                 # verify the number is between 1 and 3
                 if is_valid and 3 >= int(user_input[1]) >= 1:
                     print("Truck " + user_input[1])
-                    truck = None
-                    truck_distance = 0.0
                     if user_input[1] == "1":
                         truck = truck_1
                         truck_distance = truck_1_distance
@@ -436,7 +477,7 @@ def main():
                         truck_distance = truck_3_distance
 
                     # Print the truck mileage and packages left to deliver.
-                    print("- Current distance: {truck_distance:.1f} miles")
+                    print(f"- Current distance: {truck_distance:.1f} miles")
                     print("- Packages to deliver: " + str(len(truck)))
                     for package in truck:
                         print(package)

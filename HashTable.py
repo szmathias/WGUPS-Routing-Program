@@ -1,18 +1,40 @@
+"""
+HashTable.py
+Implements a Hash Table using Nodes with a singly linked list for package storage and lookup.
+"""
 # Author: Zack Mathias | 010868562
 # Course: C950 - Data Structures and Algorithms II
 # Project: WGUPS Routing Program
 # File: HashTable.py
 # Purpose: Implements a Hash Table using Nodes with a singly linked list
 
+from typing import List
+
+
 # Holds the key, value, and next object for each hash table implementation
 class Node:
+    """
+    Represents a node in a singly linked list for hash table buckets.
+    """
+
     def __init__(self, key=-1, value=None):
+        """
+        Initializes a Node.
+        Args:
+            key (int): Key for the node.
+            value (any): Value stored in the node.
+        """
         self.key = key
         self.value = value
         self.next = None
 
     # Prints the Node and all Nodes linked
     def __str__(self):
+        """
+        Returns a string representation of the node and its linked nodes.
+        Returns:
+            str: String representation of the node chain.
+        """
         string = ""
         current = self
         while current:
@@ -27,10 +49,18 @@ class Node:
 
 # Hash Table implementation
 class HashTable:
+    """
+    Implements a hash table with separate chaining using singly linked lists.
+    """
 
     # Initializes values to default
     def __init__(self, capacity=10):
-        self.table: list[Node] = []
+        """
+        Initializes the hash table with a given capacity.
+        Args:
+            capacity (int): Number of buckets in the hash table.
+        """
+        self.table: List[Node] = []
         self.capacity = capacity
         self.num_keys = 0
         for i in range(0, self.capacity):
@@ -38,10 +68,23 @@ class HashTable:
 
     # Basic hash function using the capacity and the key
     def hash_function(self, key: int) -> int:
+        """
+        Basic hash function using the capacity and the key.
+        Args:
+            key (int): Key to hash.
+        Returns:
+            int: Bucket index.
+        """
         return key % self.capacity
 
     # Inserts a Node into the hash table
     def insert(self, key: int, value: any) -> None:
+        """
+        Inserts a Node into the hash table.
+        Args:
+            key (int): Key for the node.
+            value (any): Value to store.
+        """
         index = self.hash_function(key)
 
         # If the location is empty, put the value in place
@@ -67,6 +110,13 @@ class HashTable:
 
     # Returns the value of the key found or None
     def lookup(self, key: int) -> any:
+        """
+        Returns the value of the key found or None.
+        Args:
+            key (int): Key to look up.
+        Returns:
+            any: Value associated with the key, or None if not found.
+        """
         index = self.hash_function(key)
 
         # Nothing exists at that location yet
@@ -87,6 +137,13 @@ class HashTable:
 
     # Removes a node if it exists in the hash table
     def remove(self, key: int) -> Node | None:
+        """
+        Removes a node if it exists in the hash table.
+        Args:
+            key (int): Key to remove.
+        Returns:
+            Node | None: Removed node, or None if not found.
+        """
         index = self.hash_function(key)
 
         # It doesn't exist.
@@ -121,6 +178,11 @@ class HashTable:
 
     # Used to print the hash table into buckets
     def __str__(self):
+        """
+        Returns a string representation of the hash table buckets and their contents.
+        Returns:
+            str: String representation of the hash table.
+        """
         string = ""
         bucket_num = 0
         for item in self.table:

@@ -1,3 +1,8 @@
+"""
+Package.py
+Defines the Package class and helper functions for package management, loading, and filtering.
+"""
+
 # Author: Zack Mathias | 010868562
 # Course: C950 - Data Structures and Algorithms II
 # Project: WGUPS Routing Program
@@ -8,6 +13,7 @@
 # Standard Library
 import csv
 import datetime
+from typing import List, Tuple
 
 # Created Imports
 from HashTable import HashTable
@@ -15,6 +21,15 @@ from HashTable import HashTable
 
 # Used to help format the Package string for consistent width
 def left_pad(value: any, width: int, pad_char: str = " ") -> str:
+    """
+    Pads a value on the left with a specified character to a given width.
+    Args:
+        value (any): Value to pad.
+        width (int): Desired width.
+        pad_char (str): Padding character.
+    Returns:
+        str: Padded string.
+    """
     result = ""
 
     # Check if the length of the value is less than the desired width
@@ -34,12 +49,29 @@ def left_pad(value: any, width: int, pad_char: str = " ") -> str:
 
 # Wraps all the Package info into a single object
 class Package:
+    """
+    Represents a delivery package with all relevant information and status.
+    """
     def __init__(self, package_id: int = -1, address: str = "", city: str = "", state: str = "", zip_code: int = -1,
                  deadline: datetime.datetime = datetime.datetime(year=1, month=1, day=1, hour=0, minute=0),
                  weight: int = 0,
                  special_notes: str = "",
                  status: str = "None",
                  delivery_time: datetime.datetime = datetime.datetime(year=1, month=1, day=1, hour=0, minute=0)):
+        """
+        Initializes a Package object.
+        Args:
+            package_id (int): Package ID.
+            address (str): Delivery address.
+            city (str): Delivery city.
+            state (str): Delivery state.
+            zip_code (int): Delivery zip code.
+            deadline (datetime.datetime): Delivery deadline.
+            weight (int): Package weight.
+            special_notes (str): Special notes or constraints.
+            status (str): Current status.
+            delivery_time (datetime.datetime): Delivery time.
+        """
         self.id = package_id
         self.address = address
         self.city = city
@@ -53,15 +85,26 @@ class Package:
 
     # Prints the deadline in a hh:mm format
     def print_deadline(self) -> None:
+        """
+        Prints the package deadline in hh:mm format.
+        """
         print(str(self.deadline.hour) + ":" + str(self.deadline.minute).zfill(2))
 
-    # Prints the delivery time in a hh:mm format
+    # Prints the delivery time in a hh:mm:ss format
     def print_delivery_time(self) -> None:
+        """
+        Prints the package delivery time in hh:mm:ss format.
+        """
         print(str(self.delivery_time.hour) + ":" + str(self.delivery_time.minute).zfill(2) + ":" + str(
             self.delivery_time.second).zfill(2))
 
     # Returns a formatted string with all the package info
     def __str__(self) -> str:
+        """
+        Returns a formatted string with all package info.
+        Returns:
+            str: Formatted package information.
+        """
         pid = left_pad(self.id, 2)
         address = left_pad(self.address, 38)
         city = left_pad(self.city, 16)
@@ -89,6 +132,13 @@ class Package:
 # Reads packages in from a CSV file and returns a hash table containing
 # all packages.
 def read_packages(package_file: str) -> HashTable:
+    """
+    Reads packages from a CSV file and returns a hash table containing all packages.
+    Args:
+        package_file (str): Path to the package CSV file.
+    Returns:
+        HashTable: Hash table of packages.
+    """
     hash_table = HashTable()
     with open(package_file, mode='r') as file:
         csv_file = csv.reader(file)
@@ -168,7 +218,14 @@ def read_packages(package_file: str) -> HashTable:
 
 # Helper function that splits packages loosely by their constraints.
 # This doesn't account for packages that need to be with other packages.
-def separate_packages(hash_table: HashTable) -> tuple[list[Package], list[Package]]:
+def separate_packages(hash_table: HashTable) -> Tuple[List[Package], List[Package]]:
+    """
+    Splits packages by constraints into normal and constrained lists.
+    Args:
+        hash_table (HashTable): Hash table of packages.
+    Returns:
+        tuple[list[Package], list[Package]]: (normal_packages, constrained_packages)
+    """
     normal_packages = []
     constrained_packages = []
     for i in range(1, hash_table.num_keys + 1):
@@ -183,9 +240,19 @@ def separate_packages(hash_table: HashTable) -> tuple[list[Package], list[Packag
 
 
 # Separate normal and constrained packages into the three trucks
-def filter_constrained_packages(normal_packages: list[Package], constrained_packages: list[Package],
-                                hash_table: HashTable, max_packages_per_truck: int) -> tuple[
-    list[Package], list[Package], list[Package]]:
+def filter_constrained_packages(normal_packages: List[Package], constrained_packages: List[Package],
+                                hash_table: HashTable, max_packages_per_truck: int) -> Tuple[
+    List[Package], List[Package], List[Package]]:
+    """
+    Separates normal and constrained packages into three trucks based on constraints.
+    Args:
+        normal_packages (list[Package]): List of normal packages.
+        constrained_packages (list[Package]): List of constrained packages.
+        hash_table (HashTable): Hash table of packages.
+        max_packages_per_truck (int): Maximum packages per truck.
+    Returns:
+        tuple[list[Package], list[Package], list[Package]]: (truck_1, truck_2, truck_3)
+    """
     # Create three empty trucks
     truck_1: list[Package] = []
     truck_2: list[Package] = []
@@ -227,7 +294,16 @@ def filter_constrained_packages(normal_packages: list[Package], constrained_pack
 
 
 # Loads packages onto the truck until the truck is full, or we run out of packages.
-def load_truck(truck: list[Package], packages: list[Package], max_packages_per_truck: int) -> list[Package]:
+def load_truck(truck: List[Package], packages: List[Package], max_packages_per_truck: int) -> List[Package]:
+    """
+    Loads packages onto a truck until full or out of packages.
+    Args:
+        truck (list[Package]): Truck to load.
+        packages (list[Package]): Packages to load.
+        max_packages_per_truck (int): Maximum packages per truck.
+    Returns:
+        list[Package]: Loaded truck.
+    """
     index = 0
     temp_list = list(packages)
     while len(truck) < max_packages_per_truck and len(packages) > 0:
